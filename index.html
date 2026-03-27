@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BRInsight – Executive Banking Dashboard</title>
+  <meta name="description"
+    content="BRInsight Executive Banking Dashboard – KPI, funding, lending, unit performance, dan risk analytics." />
+
+  <!-- ✅ FAVICON -->
+  <link rel="icon" type="image/png" href="icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ══ LOGIN OVERLAY ══════════════════════════════════════════════ -->
+  <div id="login-overlay">
+    <!-- Right-side glass panel -->
+    <div class="login-container">
+      <div class="login-card">
+        <img src="icon.png" alt="BRInsight" class="login-logo" />
+        <div class="login-title">Welcome to BRInsight</div>
+        <div class="login-sub">Branch Performance Dashboard</div>
+
+        <div class="login-field">
+          <label class="login-label">Username</label>
+          <input id="login-username" type="text" class="login-input" placeholder="Enter username"
+            autocomplete="username" />
+        </div>
+        <div class="login-field">
+          <label class="login-label">Password</label>
+          <input id="login-password" type="password" class="login-input" placeholder="Enter password"
+            autocomplete="current-password" />
+        </div>
+
+        <div id="login-err" class="login-err" style="display:none"></div>
+
+        <button class="login-btn" id="login-btn" onclick="login()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ APP CONTAINER (Dashboard — hidden until auth) ══════════════ -->
+  <div id="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img src="icon.png" alt="BRInsight Icon" class="logo-img-icon" />
+        <div class="logo-text-wrap">
+          <span class="logo-text"><span class="logo-bri">BRI</span><span class="logo-insight">nsight</span></span>
+          <span class="logo-tagline">Branch Performance Dashboard</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-label">NAVIGASI</div>
+
+      <nav class="sidebar-nav" role="navigation" aria-label="Main menu">
+        <a class="nav-item active" data-target="exec-section" href="#" aria-label="Executive Summary">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></span>
+          <span>Executive Summary</span>
+        </a>
+        <a class="nav-item" data-target="funding-section" href="#" aria-label="Funding DPK">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg></span>
+          <span>Funding (DPK)</span>
+        </a>
+        <a class="nav-item" data-target="lending-section" href="#" aria-label="Lending">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg></span>
+          <span>Lending (Kredit)</span>
+        </a>
+        <a class="nav-item" data-target="unit-section" href="#" aria-label="Unit Performance">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></span>
+          <span>Unit Performance</span>
+        </a>
+        <a class="nav-item" data-target="risk-section" href="#" aria-label="Risk dan Alerts">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></span>
+          <span>Risk &amp; Alerts</span>
+          <span class="nav-badge" id="risk-badge" style="display:none">0</span>
+        </a>
+        <a class="nav-item" data-target="input-section" href="#" aria-label="Input Data">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg></span>
+          <span>Input Data</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <!-- Logout popup -->
+        <div id="logout-popup" class="logout-popup" style="display:none">
+          <button class="logout-btn" onclick="logout()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+        </div>
+        <div class="user-chip" id="user-chip-btn" role="button" title="Klik untuk logout">
+          <div class="user-avatar">RN</div>
+          <div class="user-info">
+            <div class="user-name">Rio Nugroho</div>
+            <div class="user-sub">BO Jakarta Veteran Head</div>
+          </div>
+        </div>
+        <div class="sidebar-version">Bank Rakyat Indonesia | v2.1.0</div>
+      </div>
+    </aside>
+
+    <!-- MAIN SHELL -->
+    <div class="main-shell" id="mainShell">
+
+      <!-- TOP BAR -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="menu-toggle" id="menu-toggle"
+            onclick="document.getElementById('sidebar').classList.toggle('collapsed')" aria-label="Toggle sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div>
+            <div class="page-heading" id="page-title">Executive Summary</div>
+            <div class="period-pill" id="current-date-filter">Periode: Semua Waktu</div>
+          </div>
+        </div>
+        <div class="top-bar-right">
+          <div class="filter-row">
+            <div class="fgrp">
+              <label>Dari</label>
+              <input type="month" class="finput" id="filter-start" value="2025-01" />
+            </div>
+            <div class="fgrp">
+              <label>Hingga</label>
+              <input type="month" class="finput" id="filter-end" value="2026-03" />
+            </div>
+            <div class="fgrp presets">
+              <button class="btn-preset" data-preset="1M">1M</button>
+              <button class="btn-preset" data-preset="3M">3M</button>
+              <button class="btn-preset" data-preset="QTD">QTD</button>
+              <button class="btn-preset active" data-preset="YTD">YTD</button>
+            </div>
+            <div class="fgrp">
+              <label>Unit</label>
+              <select class="finput" id="filter-units">
+                <option value="ALL" selected>Semua Unit</option>
+                <option value="KC Veteran">KC Veteran</option>
+                <option value="KCP Taspen">KCP Taspen</option>
+                <option value="KCP Pertamina">KCP Pertamina</option>
+                <option value="KCP Abdul Muis">KCP Abdul Muis</option>
+                <option value="KCP Depkeu">KCP Depkeu</option>
+                <option value="KCP Lemhanas">KCP Lemhanas</option>
+              </select>
+            </div>
+            <button class="btn-apply" id="btn-apply-filter">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Terapkan
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT SCROLL -->
+      <div class="content-scroll">
+
+        <!-- ═══════════════════════ EXECUTIVE SECTION ═══════════════════════ -->
+        <section class="view-section active" id="exec-section">
+
+          <div class="insight-bar">
+            <span class="ib-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg></span>
+            <span id="insight-text">Memuat ringkasan data...</span>
+          </div>
+
+          <!-- KPI Row -->
+          <div class="kpi-row">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Total DPK</div>
+                <div class="kpi-val" id="kpi-total-funding">–</div>
+                <div class="kpi-sub">Dana Pihak Ketiga</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-blue2">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Total Kredit</div>
+                <div class="kpi-val" id="kpi-total-lending">–</div>
+                <div class="kpi-sub">Outstanding Kredit</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-cyan">
+              <div class="kpi-left">
+                <div class="kpi-lbl">CASA Ratio</div>
+                <div class="kpi-val" id="kpi-casa-ratio">–</div>
+                <div class="kpi-sub">Giro + Tabungan / DPK</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                  <path d="M12 2a10 10 0 0 1 10 10" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-danger" id="kpi-npl-card">
+              <div class="kpi-left">
+                <div class="kpi-lbl">NPL</div>
+                <div class="kpi-val" id="kpi-avg-npl">–</div>
+                <div class="kpi-sub">Rata-rata berbobot</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-warn">
+              <div class="kpi-left">
+                <div class="kpi-lbl">LDR</div>
+                <div class="kpi-val" id="kpi-ldr">–</div>
+                <div class="kpi-sub">Loan-to-Deposit Ratio</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
+                </svg></div>
+            </div>
+          </div>
+
+          <!-- Trend Chart -->
+          <div class="card mt-gap">
+            <div class="card-hd card-hd-flex">
+              <div>
+                <div class="card-title">Tren DPK vs Kredit</div>
+                <div class="card-sub">Data bulanan (Jan 2025 – Mar 2026)</div>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot" style="background:#0857C3"></span><span class="legend-lbl">DPK</span>
+                <span class="legend-dot" style="background:#307FE2"></span><span class="legend-lbl">Kredit</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-lg"><canvas id="trend-chart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="grid-1-1 mt-gap">
+            <!-- CASA Donut -->
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Komposisi DPK</div>
+                <div class="card-sub">CASA vs Deposito</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-donut">
+                  <canvas id="casa-chart"></canvas>
+                  <div class="donut-center" id="donut-center-label"></div>
+                </div>
+                <div class="donut-legend" id="donut-legend"></div>
+              </div>
+            </div>
+            <!-- Unit Performance Table -->
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Unit Performance</div>
+                <div class="card-sub">Performa per unit kantor</div>
+              </div>
+              <div class="table-wrapper">
+                <table class="perf-table">
+                  <thead>
+                    <tr>
+                      <th>Unit</th>
+                      <th>DPK</th>
+                      <th>Kredit</th>
+                      <th>NPL</th>
+                      <th>LDR</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="exec-unit-perf-body"></tbody>
+                </table>
+              </div>
+              <!-- hidden elements for JS compatibility -->
+              <ul class="rank-list" id="rank-top-3" style="display:none"></ul>
+              <div id="dashboard-alerts" style="display:none"></div>
+            </div>
+          </div>
+          <!-- hidden unit chart canvas for JS -->
+          <canvas id="unit-chart" style="display:none"></canvas>
+        </section>
+
+        <!-- ═══════════════════════ FUNDING SECTION ═══════════════════════ -->
+        <section class="view-section" id="funding-section">
+          <div class="insight-bar">
+            <span class="ib-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg></span>
+            <span id="funding-insight">Memuat data funding...</span>
+          </div>
+          <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Total DPK</div>
+                <div class="kpi-val" id="f-total">–</div>
+                <div class="kpi-sub">Total Dana Pihak Ketiga</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-cyan">
+              <div class="kpi-left">
+                <div class="kpi-lbl">CASA</div>
+                <div class="kpi-val" id="f-casa">–</div>
+                <div class="kpi-sub">CASA Ratio</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-warn">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Cost of Fund</div>
+                <div class="kpi-val" id="f-cof">–</div>
+                <div class="kpi-sub">Biaya dana tertimbang</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                </svg></div>
+            </div>
+          </div>
+          <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Giro</div>
+                <div class="kpi-val" id="f-giro">–</div>
+                <div class="kpi-sub" id="f-giro-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-blue2">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Tabungan</div>
+                <div class="kpi-val" id="f-tabungan">–</div>
+                <div class="kpi-sub" id="f-tab-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-cyan">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Deposito</div>
+                <div class="kpi-val" id="f-deposito">–</div>
+                <div class="kpi-sub" id="f-dep-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg></div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Tren DPK Bulanan</div>
+              <div class="card-sub">Giro, Tabungan, Deposito</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-lg"><canvas id="funding-stacked-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="grid-1-1 mt-gap">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Komposisi DPK</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-donut"><canvas id="funding-donut-chart"></canvas>
+                  <div class="donut-center" id="funding-donut-center"></div>
+                </div>
+                <div class="donut-legend" id="funding-donut-legend"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">DPK per Unit</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-md"><canvas id="funding-unit-chart"></canvas></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Tren Transaksi Digital</div>
+              <div class="card-sub">QRIS, EDC, BRImo, Qlola</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-lg"><canvas id="channel-chart"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ LENDING SECTION ═══════════════════════ -->
+        <section class="view-section" id="lending-section">
+          <div class="insight-bar">
+            <span class="ib-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg></span>
+            <span id="lending-insight">Memuat data kredit...</span>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Total Kredit</div>
+                <div class="kpi-val" id="l-total">–</div>
+                <div class="kpi-sub">Outstanding</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-blue2">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Kredit Konsumer</div>
+                <div class="kpi-val" id="l-consumer">–</div>
+                <div class="kpi-sub" id="l-consumer-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-cyan">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Kredit Mikro</div>
+                <div class="kpi-val" id="l-mikro">–</div>
+                <div class="kpi-sub" id="l-mikro-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-danger" id="kpi-npl-lending">
+              <div class="kpi-left">
+                <div class="kpi-lbl">NPL</div>
+                <div class="kpi-val" id="l-npl">–</div>
+                <div class="kpi-sub" id="l-sml">SML: –</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Kredit SME</div>
+                <div class="kpi-val" id="l-sme">–</div>
+                <div class="kpi-sub" id="l-sme-pct">–% dari total</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                </svg></div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Tren Kredit per Segmen</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-lg"><canvas id="lending-trend-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="grid-1-1 mt-gap">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Segmen Kredit</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-donut"><canvas id="lending-seg-chart"></canvas>
+                  <div class="donut-center" id="lending-donut-center"></div>
+                </div>
+                <div class="donut-legend" id="lending-donut-legend"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">NPL per Produk</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-md"><canvas id="npl-product-chart"></canvas></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">NPL per Unit</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-md"><canvas id="npl-unit-chart"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ UNIT SECTION ═══════════════════════ -->
+        <section class="view-section" id="unit-section">
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title">Perbandingan DPK &amp; Kredit per Unit</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-lg"><canvas id="unit-compare-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="grid-1-1 mt-gap">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Porsi DPK per Unit (%)</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-md"><canvas id="unit-share-chart"></canvas></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">Matriks DPK vs NPL</div>
+                <div class="card-sub">Posisi setiap unit</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-md"><canvas id="unit-scatter-chart"></canvas></div>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Scorecard Unit</div>
+              <div class="card-sub">Ringkasan KPI per unit kantor</div>
+            </div>
+            <div id="unit-scorecard"></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ RISK SECTION ═══════════════════════ -->
+        <section class="view-section" id="risk-section">
+          <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+            <div class="kpi-card kpi-danger">
+              <div class="kpi-left">
+                <div class="kpi-lbl">NPL Kritis</div>
+                <div class="kpi-val" id="r-npl-count">–</div>
+                <div class="kpi-sub">Unit NPL &gt; 3%</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-warn">
+              <div class="kpi-left">
+                <div class="kpi-lbl">CASA Menurun</div>
+                <div class="kpi-val" id="r-casa-count">–</div>
+                <div class="kpi-sub">Unit CASA growth &lt; 0</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-warn">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Pertumbuhan Negatif</div>
+                <div class="kpi-val" id="r-growth-count">–</div>
+                <div class="kpi-sub">Unit kredit growth &lt; 0</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                </svg></div>
+            </div>
+            <div class="kpi-card kpi-blue">
+              <div class="kpi-left">
+                <div class="kpi-lbl">Channel Rendah</div>
+                <div class="kpi-val" id="r-channel-count">–</div>
+                <div class="kpi-sub">Unit growth channel &lt; 2%</div>
+              </div>
+              <div class="kpi-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                </svg></div>
+            </div>
+          </div>
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Heatmap Risiko Unit</div>
+              <div class="card-sub">NPL dan pertumbuhan per produk</div>
+            </div>
+            <div class="heatmap-scroll">
+              <table class="heatmap-tbl" id="risk-heatmap-table">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════ INPUT SECTION ═══════════════════════ -->
+        <section class="view-section" id="input-section">
+          <div class="card">
+            <div class="card-hd card-hd-flex">
+              <div>
+                <div class="card-title">Input &amp; Edit Data</div>
+                <div class="card-sub">Kelola data keuangan cabang</div>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-pri" id="btn-add-row"><i data-lucide="plus"></i> Tambah Baris</button>
+                <button class="btn btn-sec" id="btn-save-table"><i data-lucide="save"></i> Simpan</button>
+                <button class="btn btn-danger" id="btn-reset-db"><i data-lucide="refresh-cw"></i> Reset Data</button>
+              </div>
+            </div>
+            <div class="tbl-scroll p0">
+              <table class="data-tbl" id="editable-data-table">
+                <thead>
+                  <tr>
+                    <th>Tanggal</th>
+                    <th>Unit</th>
+                    <th>Jenis</th>
+                    <th>Segmen</th>
+                    <th>Produk</th>
+                    <th>Nominal (Rp)</th>
+                    <th>NPL (%)</th>
+                    <th>Growth (%)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- end content-scroll -->
+    </div><!-- end main-shell -->
+
+  </div><!-- end app-container -->
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
