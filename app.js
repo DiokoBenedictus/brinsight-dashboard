@@ -1116,18 +1116,3 @@ function segmenOpts(sel) {
     return ['Mikro','Ritel','Konsumer','SME']
         .map(o=>`<option value="${o}"${sel===o?' selected':''}>${o}</option>`).join('');
 }
-
-
-// MOBILE SIDEBAR TOGGLE
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidebar');
-
-  if (toggle && sidebar) {
-    toggle.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
-        sidebar.classList.toggle('active');
-      }
-    });
-  }
-});
