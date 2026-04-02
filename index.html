@@ -282,6 +282,9 @@
             </div>
           </div>
 
+          <!-- ═ SDSS DECISION PANEL ═══════════════════════════════════════ -->
+          <div id="decision-panel" class="decision-panel mt-gap" style="display:none"></div>
+
           <!-- Trend Chart -->
           <div class="card mt-gap">
             <div class="card-hd card-hd-flex">
@@ -720,6 +723,14 @@
 
   </div><!-- end app-container -->
 
+  <!-- Intelligence Engines (SDSS) — must load before app.js -->
+  <script src="engine/vintageEngine.js"></script>
+  <script src="engine/casaRadarEngine.js"></script>
+  <script src="engine/seasonalEngine.js"></script>
+  <script src="engine/strategyEngine.js"></script>
+  <script src="engine/scoringEngine.js"></script>
+  <script src="engine/decisionEngine.js"></script>
+  <!-- Core -->
   <script src="db.js"></script>
   <script src="app.js"></script>
 </body>

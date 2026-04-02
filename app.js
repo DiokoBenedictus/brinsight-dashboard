@@ -202,11 +202,30 @@ async function refreshAll() {
             allUnits.map(u => `<option value="${u}"${cur===u?' selected':''}>${u}</option>`).join('');
     }
 
-    const funding  = filtered.filter(d => d.jenis_produk === 'Funding');
-    const lending  = filtered.filter(d => d.jenis_produk === 'Lending');
-    const channel  = filtered.filter(d => d.jenis_produk === 'Channel');
+    const funding = filtered.filter(d => d.jenis_produk === 'Funding');
+    const lending = filtered.filter(d => d.jenis_produk === 'Lending');
+    const channel = filtered.filter(d => d.jenis_produk === 'Channel');
 
-    renderExecView(funding, lending);
+    // ── SDSS Engine Pipeline ────────────────────────────────────────────────
+    let decision = null;
+    try {
+        const vintage   = window.vintageEngine   ? window.vintageEngine.analyze(lending)                      : null;
+        const casaRadar = window.casaRadarEngine ? window.casaRadarEngine.analyze(funding, channel)           : null;
+        const seasonal  = window.seasonalEngine  ? window.seasonalEngine.analyze(funding, lending)            : null;
+        const strategy  = window.strategyEngine  ? window.strategyEngine.analyze(lending, funding, channel)   : null;
+        const scoring   = window.scoringEngine   ? window.scoringEngine.compute({ casaRadar, vintage, seasonal, strategy, funding }) : null;
+        decision = window.decisionEngine
+            ? window.decisionEngine.generate({ vintage, casaRadar, seasonal, strategy, scoring, funding, lending, channel })
+            : null;
+
+        window.appState.lastDecision = decision; // expose for debugging
+    } catch (engineErr) {
+        console.warn('[SDSS] Engine error (non-fatal):', engineErr);
+    }
+    // ───────────────────────────────────────────────────────────────────────
+
+    renderExecView(funding, lending, decision);
+    renderDecisionPanel(decision);
     renderFundingView(funding, channel);
     renderLendingView(lending);
     renderUnitView(funding, lending);
@@ -305,7 +324,7 @@ const commonOptions = {
 // ══════════════════════════════════════════════════
 // EXECUTIVE VIEW
 // ══════════════════════════════════════════════════
-function renderExecView(funding, lending) {
+function renderExecView(funding, lending, decision) {
     const tFunding = funding.reduce((s,i) => s+i.nominal, 0);
     const tLending = lending.reduce((s,i) => s+i.nominal, 0);
     const tCasa    = funding.filter(f => !isDeposito(f.produk)).reduce((s,i) => s+i.nominal, 0);
@@ -331,12 +350,19 @@ function renderExecView(funding, lending) {
         nplCard.className = 'kpi-card ' + (avgNpl > 3 ? 'kpi-danger' : avgNpl > 2 ? 'kpi-warn' : 'kpi-green');
     }
 
-    // Insight
+    // Insight bar — use engine summary if available, fallback to legacy logic
     let insight = '';
-    if (avgNpl > 3) insight = `⚠️ NPL ${fPct(avgNpl)} melampaui threshold 3%. Segera review portofolio kredit berisiko.`;
-    else if (casaR < 60) insight = `📉 CASA Ratio ${fPct(casaR)} di bawah target 60%. Intensifkan penghimpunan giro & tabungan.`;
-    else if (ldr > 92) insight = `📈 LDR ${fPct(ldr)} mendekati batas atas 92%. Pertimbangkan akselerasi DPK.`;
-    else insight = `✅ Kinerja cabang dalam kondisi baik. DPK ${fRp(tFunding)}, Kredit ${fRp(tLending)}, NPL ${fPct(avgNpl)} (aman).`;
+    if (decision && decision.summary) {
+        insight = decision.summary;
+    } else if (avgNpl > 3) {
+        insight = `⚠️ NPL ${fPct(avgNpl)} melampaui threshold 3%. Segera review portofolio kredit berisiko.`;
+    } else if (casaR < 60) {
+        insight = `📉 CASA Ratio ${fPct(casaR)} di bawah target 60%. Intensifkan penghimpunan giro & tabungan.`;
+    } else if (ldr > 92) {
+        insight = `📈 LDR ${fPct(ldr)} mendekati batas atas 92%. Pertimbangkan akselerasi DPK.`;
+    } else {
+        insight = `✅ Kinerja cabang dalam kondisi baik. DPK ${fRp(tFunding)}, Kredit ${fRp(tLending)}, NPL ${fPct(avgNpl)} (aman).`;
+    }
     setText('insight-text', insight);
 
     // Trend Chart — Line dual axis
@@ -494,21 +520,156 @@ function renderExecView(funding, lending) {
             : '<li class="empty-info">Tidak ada data</li>';
     }
 
-    // Alerts
+    // Alerts panel (Issue list from SDSS — filled by renderDecisionPanel)
+    // Badge count still computed here for sidebar indicator
     const alerts = document.getElementById('dashboard-alerts');
     if (alerts) {
         const critical = lending.filter(d => d.npl !== null && d.npl > 3);
         const byUnitNpl = critical.reduce((acc,i) => { if(!acc[i.unit] || acc[i.unit] < i.npl) acc[i.unit]=i.npl; return acc; }, {});
-        const alertHtml = Object.entries(byUnitNpl).slice(0,4).map(([unit, npl]) => `
-            <div class="alert-item a-danger">
-                <div class="alert-icon"><i data-lucide="alert-octagon"></i></div>
-                <div><div class="at">NPL Kritis — ${unit}</div><div class="as">Rata-rata NPL ${fPct(npl)} (threshold 3%)</div></div>
-            </div>`).join('');
-        alerts.innerHTML = alertHtml || '<div class="empty-info">✅ Tidak ada alert risiko saat ini.</div>';
-
         const badge = document.getElementById('risk-badge');
-        if (badge) badge.textContent = Object.keys(byUnitNpl).length;
+        if (badge) {
+            badge.textContent = Object.keys(byUnitNpl).length;
+            badge.style.display = Object.keys(byUnitNpl).length > 0 ? 'inline-block' : 'none';
+        }
     }
+}
+
+// ══════════════════════════════════════════════════
+// DECISION PANEL — SDSS Command Center
+// ══════════════════════════════════════════════════
+function renderDecisionPanel(decision) {
+    const panel = document.getElementById('decision-panel');
+    if (!panel) return;
+
+    if (!decision) {
+        panel.style.display = 'none';
+        return;
+    }
+    panel.style.display = 'block';
+
+    // ── Grade badge color ────────────────────────────────────────────────
+    const gradeColors = { A: '#10B981', B: '#F59E0B', C: '#F97316', D: '#EF4444' };
+    const urgencyColors = { 'SEGERA': '#EF4444', 'MINGGU INI': '#F59E0B', 'BULAN INI': '#3B82F6' };
+    const priorityIcons = {
+        CASA_RECOVERY:       '🏦',
+        NPL_RECOVERY:        '🔴',
+        STRATEGY_ALIGNMENT:  '🎯',
+        GROWTH_RECOVERY:     '📈',
+        GROWTH_OPTIMIZATION: '✅'
+    };
+    const priorityLabels = {
+        CASA_RECOVERY:       'CASA RECOVERY',
+        NPL_RECOVERY:        'NPL RECOVERY',
+        STRATEGY_ALIGNMENT:  'STRATEGY ALIGNMENT',
+        GROWTH_RECOVERY:     'GROWTH RECOVERY',
+        GROWTH_OPTIMIZATION: 'GROWTH OPTIMIZATION'
+    };
+
+    const gradeColor   = gradeColors[decision.grade]   || '#64748B';
+    const urgencyColor = urgencyColors[decision.urgency] || '#64748B';
+    const priorityIcon = priorityIcons[decision.priority]  || '📊';
+    const priorityLbl  = priorityLabels[decision.priority] || decision.priority;
+
+    // ── Score bar breakdown ────────────────────────────────────────────────
+    const breakdownHtml = decision.scoreBreakdown
+        ? Object.entries({
+            'CASA': decision.scoreBreakdown.casaHealth,
+            'NPL':  decision.scoreBreakdown.nplRisk,
+            'Growth': decision.scoreBreakdown.growthMomentum,
+            'Strategi': decision.scoreBreakdown.strategyAlignment,
+            'Seasonal': decision.scoreBreakdown.seasonalStability
+          }).map(([label, val]) => {
+            const color = val >= 70 ? '#10B981' : val >= 50 ? '#F59E0B' : '#EF4444';
+            return `
+                <div class="dp-bar-row">
+                    <span class="dp-bar-label">${label}</span>
+                    <div class="dp-bar-track">
+                        <div class="dp-bar-fill" style="width:${val}%;background:${color}"></div>
+                    </div>
+                    <span class="dp-bar-val" style="color:${color}">${val}</span>
+                </div>`;
+          }).join('')
+        : '';
+
+    // ── Issues list ────────────────────────────────────────────────────────
+    const issuesHtml = (decision.issues || []).map(issue => {
+        const tag    = issue.match(/^\[([A-Z]+)\]/);
+        const tagLbl = tag ? tag[1] : 'INFO';
+        const text   = issue.replace(/^\[[A-Z]+\]\s*/, '');
+        const tagColor = {
+            CASA: '#0EA5E9', NPL: '#EF4444', STRATEGI: '#8B5CF6',
+            SEASONAL: '#F59E0B', INFO: '#10B981'
+        }[tagLbl] || '#64748B';
+        return `
+            <div class="dp-issue">
+                <span class="dp-issue-tag" style="background:${tagColor}20;color:${tagColor};border:1px solid ${tagColor}40">${tagLbl}</span>
+                <span class="dp-issue-text">${text}</span>
+            </div>`;
+    }).join('');
+
+    // ── Actions list ───────────────────────────────────────────────────────
+    const actionsHtml = (decision.actions || []).map((action, i) => `
+        <div class="dp-action">
+            <div class="dp-action-num">${i + 1}</div>
+            <div class="dp-action-text">${action}</div>
+        </div>`
+    ).join('');
+
+    // ── Render ─────────────────────────────────────────────────────────────
+    panel.innerHTML = `
+        <div class="dp-header">
+            <div class="dp-header-left">
+                <div class="dp-priority-badge">
+                    <span class="dp-priority-icon">${priorityIcon}</span>
+                    <span class="dp-priority-label">PRIORITAS: ${priorityLbl}</span>
+                </div>
+                <div class="dp-urgency" style="background:${urgencyColor}20;color:${urgencyColor};border:1px solid ${urgencyColor}40">
+                    ⏱ ${decision.urgency}
+                </div>
+            </div>
+            <div class="dp-header-right">
+                <div class="dp-score-circle" style="border-color:${gradeColor}">
+                    <div class="dp-score-num" style="color:${gradeColor}">${decision.score}</div>
+                    <div class="dp-score-grade" style="color:${gradeColor}">Grade ${decision.grade}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dp-body">
+            <div class="dp-col dp-col-left">
+
+                <div class="dp-section">
+                    <div class="dp-section-title">📋 Root Cause</div>
+                    <div class="dp-root-cause">${decision.rootCause}</div>
+                </div>
+
+                <div class="dp-section">
+                    <div class="dp-section-title">⚠️ Isu Terdeteksi</div>
+                    <div class="dp-issues">${issuesHtml || '<div class="dp-empty">Tidak ada isu kritis</div>'}</div>
+                </div>
+
+                ${decision.context ? `<div class="dp-context">💡 ${decision.context}</div>` : ''}
+            </div>
+
+            <div class="dp-col dp-col-right">
+
+                <div class="dp-section">
+                    <div class="dp-section-title">🎯 Aksi Harian (${(decision.actions||[]).length} Prioritas)</div>
+                    <div class="dp-actions">${actionsHtml}</div>
+                </div>
+
+                <div class="dp-section">
+                    <div class="dp-section-title">📊 Branch Health Score</div>
+                    <div class="dp-breakdown">${breakdownHtml}</div>
+                </div>
+
+                <div class="dp-impact">
+                    <div class="dp-impact-label">💰 Expected Impact</div>
+                    <div class="dp-impact-text">${decision.expectedImpact || '—'}</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // ══════════════════════════════════════════════════
