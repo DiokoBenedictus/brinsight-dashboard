@@ -178,6 +178,7 @@
               <button class="btn-preset" data-preset="3M">3M</button>
               <button class="btn-preset" data-preset="QTD">QTD</button>
               <button class="btn-preset active" data-preset="YTD">YTD</button>
+              <button class="btn-preset btn-harian" id="btn-preset-harian" data-preset="harian">📅 Harian</button>
             </div>
             <div class="fgrp">
               <label>Unit</label>
@@ -189,6 +190,7 @@
                 <option value="KCP Abdul Muis">KCP Abdul Muis</option>
                 <option value="KCP Depkeu">KCP Depkeu</option>
                 <option value="KCP Lemhanas">KCP Lemhanas</option>
+                <option value="KCP BUMN">KCP BUMN</option>
               </select>
             </div>
             <button class="btn-apply" id="btn-apply-filter">
@@ -286,11 +288,11 @@
           <div id="decision-panel" class="decision-panel mt-gap" style="display:none"></div>
 
           <!-- Trend Chart -->
-          <div class="card mt-gap">
+          <div class="card mt-gap" id="exec-trend-card">
             <div class="card-hd card-hd-flex">
               <div>
-                <div class="card-title">Tren DPK vs Kredit</div>
-                <div class="card-sub">Data bulanan (Jan 2025 – Mar 2026)</div>
+                <div class="card-title" id="exec-trend-title">Tren DPK vs Kredit</div>
+                <div class="card-sub" id="exec-trend-sub">Data bulanan (Jan 2025 – Mar 2026)</div>
               </div>
               <div class="legend-row">
                 <span class="legend-dot" style="background:#0857C3"></span><span class="legend-lbl">DPK</span>
@@ -300,6 +302,11 @@
             <div class="card-body">
               <div class="chart-wrap-lg"><canvas id="trend-chart"></canvas></div>
             </div>
+          </div>
+          <!-- Calendar panel (daily mode) -->
+          <div id="calendar-exec-daily" class="card mt-gap" style="display:none">
+            <div class="card-hd"><div class="card-title">📅 Hari Penting dalam Periode</div></div>
+            <div class="calendar-panel" id="calendar-exec-daily-inner"></div>
           </div>
 
           <!-- Bottom Row -->
@@ -431,7 +438,7 @@
                 </svg></div>
             </div>
           </div>
-          <div class="card mt-gap">
+          <div class="card mt-gap" id="funding-trend-card">
             <div class="card-hd">
               <div class="card-title">Tren DPK Bulanan</div>
               <div class="card-sub">Giro, Tabungan, Deposito</div>
@@ -440,7 +447,7 @@
               <div class="chart-wrap-lg"><canvas id="funding-stacked-chart"></canvas></div>
             </div>
           </div>
-          <div class="grid-1-1 mt-gap">
+          <div class="grid-1-1 mt-gap" id="funding-donut-row">
             <div class="card">
               <div class="card-hd">
                 <div class="card-title">Komposisi DPK</div>
@@ -461,13 +468,68 @@
               </div>
             </div>
           </div>
-          <div class="card mt-gap">
+          <div class="card mt-gap" id="channel-card">
             <div class="card-hd">
               <div class="card-title">Tren Transaksi Digital</div>
               <div class="card-sub">QRIS, EDC, BRImo, Qlola</div>
             </div>
             <div class="card-body">
               <div class="chart-wrap-lg"><canvas id="channel-chart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- ══ DPK vs RKA ═════════════════════════════════════════ -->
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">DPK vs RKA</div>
+              <div class="card-sub">Perbandingan realisasi DPK terhadap target RKA</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-md"><canvas id="dpk-rka-chart"></canvas></div>
+            </div>
+          </div>
+          <!-- ══ QRIS & EDC PRODUKTIF ════════════════════════════════ -->
+          <div class="grid-1-1 mt-gap">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">QRIS Produktif</div>
+                <div class="card-sub">Produktif vs Non-Produktif</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-donut">
+                  <canvas id="qris-produktif-chart"></canvas>
+                  <div class="donut-center" id="qris-produktif-center"></div>
+                </div>
+                <div class="donut-legend" id="qris-produktif-legend"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">EDC Produktif</div>
+                <div class="card-sub">Produktif vs Non-Produktif</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-donut">
+                  <canvas id="edc-produktif-chart"></canvas>
+                  <div class="donut-center" id="edc-produktif-center"></div>
+                </div>
+                <div class="donut-legend" id="edc-produktif-legend"></div>
+              </div>
+            </div>
+          </div>
+          <div id="funding-daily-section" style="display:none">
+            <div class="card mt-gap">
+              <div class="card-hd">
+                <div class="card-title">Tren DPK Harian</div>
+                <div class="card-sub">Giro · Tabungan · Deposito — merah = hari libur</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-lg"><canvas id="funding-daily-chart"></canvas></div>
+              </div>
+            </div>
+            <div class="card mt-gap">
+              <div class="card-hd"><div class="card-title">📅 Hari Penting dalam Periode</div></div>
+              <div class="calendar-panel" id="calendar-funding-daily"></div>
             </div>
           </div>
         </section>
@@ -542,7 +604,7 @@
                 </svg></div>
             </div>
           </div>
-          <div class="card mt-gap">
+          <div class="card mt-gap" id="lending-trend-card">
             <div class="card-hd">
               <div class="card-title">Tren Kredit per Segmen</div>
             </div>
@@ -550,7 +612,7 @@
               <div class="chart-wrap-lg"><canvas id="lending-trend-chart"></canvas></div>
             </div>
           </div>
-          <div class="grid-1-1 mt-gap">
+          <div class="grid-1-1 mt-gap" id="lending-seg-row">
             <div class="card">
               <div class="card-hd">
                 <div class="card-title">Segmen Kredit</div>
@@ -571,12 +633,48 @@
               </div>
             </div>
           </div>
-          <div class="card mt-gap">
+          <div class="card mt-gap" id="lending-npl-unit-card">
             <div class="card-hd">
               <div class="card-title">NPL per Unit</div>
             </div>
             <div class="card-body">
               <div class="chart-wrap-md"><canvas id="npl-unit-chart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- ══ KREDIT SME vs RKA ══════════════════════════════════ -->
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Kredit SME vs RKA</div>
+              <div class="card-sub">Perbandingan outstanding SME terhadap target RKA</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-md"><canvas id="sme-rka-chart"></canvas></div>
+            </div>
+          </div>
+          <!-- ══ KREDIT KONSUMER vs RKA ═══════════════════════════ -->
+          <div class="card mt-gap">
+            <div class="card-hd">
+              <div class="card-title">Kredit Konsumer vs RKA</div>
+              <div class="card-sub">Perbandingan outstanding konsumer terhadap target RKA</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap-md"><canvas id="konsumer-rka-chart"></canvas></div>
+            </div>
+          </div>
+          <div id="lending-daily-section" style="display:none">
+            <div class="card mt-gap">
+              <div class="card-hd">
+                <div class="card-title">Tren Kredit Harian</div>
+                <div class="card-sub">Outstanding per hari — merah = hari libur</div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap-lg"><canvas id="lending-daily-chart"></canvas></div>
+              </div>
+            </div>
+            <div class="card mt-gap">
+              <div class="card-hd"><div class="card-title">📅 Hari Penting dalam Periode</div></div>
+              <div class="calendar-panel" id="calendar-lending-daily"></div>
             </div>
           </div>
         </section>
@@ -669,6 +767,32 @@
                 </svg></div>
             </div>
           </div>
+
+          <!-- ═ BRANCH COMMAND CENTER ══════════════════════════════════ -->
+          <div id="risk-decision-panel" class="decision-panel mt-gap" style="display:none"></div>
+
+          <!-- ═ RISK MATRIX ════════════════════════════════════════════ -->
+          <div id="risk-matrix" class="mt-gap"></div>
+
+          <!-- ═ GROWTH MATRIX ══════════════════════════════════════════ -->
+          <div id="growth-matrix" class="mt-gap"></div>
+
+          <!-- ═ ALL UNIT DECISIONS GRID ════════════════════════════════ -->
+          <div id="unit-decisions-panel" class="mt-gap" style="display:none">
+            <div class="card">
+              <div class="card-hd card-hd-flex">
+                <div>
+                  <div class="card-title">📋 Semua Keputusan Unit</div>
+                  <div class="card-sub">Prioritisasi, root cause &amp; dampak per unit</div>
+                </div>
+              </div>
+              <div class="cmd-decisions-section">
+                <div id="unit-decisions-grid" class="cmd-decisions-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═ HEATMAP ════════════════════════════════════════════════ -->
           <div class="card mt-gap">
             <div class="card-hd">
               <div class="card-title">Heatmap Risiko Unit</div>
@@ -730,6 +854,8 @@
   <script src="engine/strategyEngine.js"></script>
   <script src="engine/scoringEngine.js"></script>
   <script src="engine/decisionEngine.js"></script>
+  <script src="engine/analyticsEngine.js"></script>
+  <script src="engine/unitDecisionEngine.js"></script>
   <!-- Core -->
   <script src="db.js"></script>
   <script src="app.js"></script>

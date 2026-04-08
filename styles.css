@@ -1902,3 +1902,546 @@ select.ec {
     color: var(--success-t);
     line-height: 1.5;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   BRANCH COMMAND CENTER — Analytics DSS (cmd-* classes)
+   Used by _renderCommandCenter() in app.js
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Command Center Header ──────────────────────────────────── */
+.cmd-hd {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 22px;
+    background: linear-gradient(135deg, #0A1929 0%, #0F2D5A 50%, #0D3B7A 100%);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-wrap: wrap;
+}
+
+.cmd-hd-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.cmd-badge-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cmd-focus {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+/* ─── Command Center Stat Boxes (header) ───────────────────── */
+.cmd-hd-stats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.cmd-stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.1);
+    gap: 3px;
+    transition: var(--trans);
+}
+
+.cmd-stat-box:hover {
+    background: rgba(255,255,255,.12);
+}
+
+.cmd-stat-val {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.cmd-stat-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,.55);
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    white-space: nowrap;
+}
+
+/* ─── Command Center Body ──────────────────────────────────── */
+.cmd-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+@media (max-width: 1100px) {
+    .cmd-body { grid-template-columns: 1fr; }
+    .cmd-hd { flex-direction: column; }
+}
+
+.cmd-left {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-right: 1px solid var(--border);
+    min-width: 0;
+}
+
+.cmd-right {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    background: var(--bg);
+}
+
+.cmd-summary {
+    font-size: 13px;
+    color: var(--txt-2);
+    line-height: 1.65;
+    background: var(--brand-bg);
+    border-left: 3px solid var(--brand-1);
+    padding: 12px 14px;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+
+/* ─── Unit Priority Cards ──────────────────────────────────── */
+.cmd-unit-card {
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: var(--trans);
+    box-shadow: var(--shadow);
+}
+
+.cmd-unit-card:hover {
+    transform: translateX(3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Priority border accents */
+.cmd-pri-high  { border-left: 4px solid #EF4444 !important; }
+.cmd-pri-medium { border-left: 4px solid #F59E0B !important; }
+.cmd-pri-low   { border-left: 4px solid #10B981 !important; }
+
+.cmd-unit-hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.cmd-unit-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+/* Priority pill badges */
+.cmd-pill {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 12px;
+    letter-spacing: .5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cmd-pill.cmd-pri-high,
+.cmd-pri-high .cmd-pill {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: none !important;
+}
+
+.cmd-pill.cmd-pri-medium,
+.cmd-pri-medium .cmd-pill {
+    background: #FEF3C7;
+    color: #92400E;
+    border: none !important;
+}
+
+.cmd-pill.cmd-pri-low,
+.cmd-pri-low .cmd-pill {
+    background: #D1FAE5;
+    color: #065F46;
+    border: none !important;
+}
+
+/* ─── Unit Metric Grid ─────────────────────────────────────── */
+.cmd-unit-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.cmd-um {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 5px 7px;
+}
+
+.cmd-um-lbl {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--txt-3);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.cmd-um-val {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--txt);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* Semantic color states */
+.cmd-danger { color: #EF4444 !important; }
+.cmd-warn   { color: #F59E0B !important; }
+.cmd-ok     { color: #10B981 !important; }
+.cmd-neutral { color: var(--txt-3) !important; }
+
+/* ─── Root Cause snippet ──────────────────────────────────── */
+.cmd-unit-cause {
+    font-size: 11px;
+    color: var(--txt-3);
+    line-height: 1.5;
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 6px 8px;
+    border-left: 3px solid var(--border-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RISK MATRIX TABLE — (rm-* classes)
+   Used by renderRiskMatrix() and renderGrowthMatrix()
+═══════════════════════════════════════════════════════════════ */
+
+.rm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 580px;
+}
+
+.rm-table thead th {
+    background: #0F172A;
+    color: rgba(255,255,255,.85);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,.07);
+}
+
+.rm-table thead th:last-child { border-right: none; }
+
+.rm-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.rm-table tbody td:last-child { border-right: none; }
+
+.rm-table tbody tr:last-child td { border-bottom: none; }
+
+.rm-table tbody tr:hover { background: var(--bg); }
+
+.rm-rank {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--txt-3);
+    width: 30px;
+    text-align: center;
+}
+
+.rm-unit {
+    font-weight: 700 !important;
+    color: var(--txt) !important;
+}
+
+/* ─── Risk / Growth badges ─────────────────────────────────── */
+.rm-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.rm-danger {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.rm-warn {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.rm-ok {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+/* ─── Category badge (Risk) ────────────────────────────────── */
+.rm-cat-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ─── NPL Trend ────────────────────────────────────────────── */
+.rm-trend {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 14px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rm-trend.rm-ok      { background: #D1FAE5; color: #065F46; }
+.rm-trend.rm-danger  { background: #FEE2E2; color: #991B1B; }
+.rm-trend.rm-neutral { background: #F1F5F9; color: var(--txt-2); }
+
+/* ─── Risk Index Bar ───────────────────────────────────────── */
+.rm-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.rm-bar-track {
+    flex: 1;
+    height: 7px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rm-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .5s ease;
+}
+
+.rm-bar-val {
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* ─── Growth Matrix color helpers ──────────────────────────── */
+.gm-ok     { background: #D1FAE5 !important; color: #065F46 !important; }
+.gm-warn   { background: #FEF3C7 !important; color: #92400E !important; }
+.gm-danger { background: #FEE2E2 !important; color: #991B1B !important; }
+
+/* ─── Decision Panel − Unit Decisions expandable row ────────── */
+.cmd-decisions-section {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.cmd-decisions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.cmd-decision-mini {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: var(--trans);
+}
+
+.cmd-decision-mini:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.cmd-dm-hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.cmd-dm-unit {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.cmd-dm-score {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--txt-3);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cmd-dm-cause {
+    font-size: 11px;
+    color: var(--txt-3);
+    line-height: 1.45;
+}
+
+.cmd-dm-impact {
+    font-size: 11px;
+    color: var(--success-t);
+    background: #D1FAE5;
+    border-radius: 6px;
+    padding: 4px 8px;
+    line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════
+   DAILY MODE — Harian Button & Calendar Panel
+   ═══════════════════════════════════════════ */
+
+/* Harian preset button — teal/calendar accent */
+.btn-preset.btn-harian {
+    background: #fff;
+    color: #0F766E;
+    border-color: #99F6E4;
+    font-size: 12px;
+    padding: 0 12px;
+    gap: 5px;
+}
+.btn-preset.btn-harian:hover,
+.btn-preset.btn-harian.active {
+    background: #0F766E;
+    color: #fff;
+    border-color: #0F766E;
+    box-shadow: 0 2px 8px rgba(15,118,110,.25);
+}
+
+/* Calendar panel container */
+.calendar-panel {
+    padding: 12px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Single calendar row */
+.calendar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+    cursor: default;
+}
+.calendar-item:hover {
+    background: #FEF2F2;
+}
+
+/* Red dot marker */
+.cal-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #EF4444;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(239,68,68,.15);
+}
+
+/* Date text */
+.cal-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--txt-2);
+    min-width: 190px;
+    flex-shrink: 0;
+}
+
+/* Event label */
+.cal-label {
+    font-size: 12px;
+    color: #B91C1C;
+    font-weight: 500;
+    background: #FEE2E2;
+    padding: 2px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+}
+
+/* Empty state */
+.cal-empty {
+    font-size: 12px;
+    color: var(--txt-3);
+    padding: 12px 10px;
+    font-style: italic;
+}
