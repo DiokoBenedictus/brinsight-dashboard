@@ -719,6 +719,10 @@
 
         <!-- ═══════════════════════ RISK SECTION ═══════════════════════ -->
         <section class="view-section" id="risk-section">
+
+          <!-- ═ NEW RISK ENGINE DASHBOARD ════════════════════════════════ -->
+          <div id="risk-engine-dashboard" style="margin-bottom: 24px;"></div>
+
           <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
             <div class="kpi-card kpi-danger">
               <div class="kpi-left">
@@ -774,37 +778,13 @@
           <!-- ═ RISK MATRIX ════════════════════════════════════════════ -->
           <div id="risk-matrix" class="mt-gap"></div>
 
+          <!-- ═ FULL RISK PROFILE DRILLDOWN ════════════════════════════ -->
+          <div id="unit-full-risk-profile" class="risk-drilldown-panel mt-gap"></div>
+
           <!-- ═ GROWTH MATRIX ══════════════════════════════════════════ -->
           <div id="growth-matrix" class="mt-gap"></div>
 
-          <!-- ═ ALL UNIT DECISIONS GRID ════════════════════════════════ -->
-          <div id="unit-decisions-panel" class="mt-gap" style="display:none">
-            <div class="card">
-              <div class="card-hd card-hd-flex">
-                <div>
-                  <div class="card-title">📋 Semua Keputusan Unit</div>
-                  <div class="card-sub">Prioritisasi, root cause &amp; dampak per unit</div>
-                </div>
-              </div>
-              <div class="cmd-decisions-section">
-                <div id="unit-decisions-grid" class="cmd-decisions-grid"></div>
-              </div>
-            </div>
-          </div>
 
-          <!-- ═ HEATMAP ════════════════════════════════════════════════ -->
-          <div class="card mt-gap">
-            <div class="card-hd">
-              <div class="card-title">Heatmap Risiko Unit</div>
-              <div class="card-sub">NPL dan pertumbuhan per produk</div>
-            </div>
-            <div class="heatmap-scroll">
-              <table class="heatmap-tbl" id="risk-heatmap-table">
-                <thead></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
         </section>
 
         <!-- ═══════════════════════ INPUT SECTION ═══════════════════════ -->
@@ -856,6 +836,14 @@
   <script src="engine/decisionEngine.js"></script>
   <script src="engine/analyticsEngine.js"></script>
   <script src="engine/unitDecisionEngine.js"></script>
+
+  <!-- Risk Engine (7-type parameter-based scoring) — load order matters:    -->
+  <!--   1. riskDummyData  → sets window.RISK_DUMMY_DATA                     -->
+  <!--   2. riskEngine     → sets window.riskEngine (reads riskConfig.json)  -->
+  <!--   3. app.js         → calls initRiskModule() on DOMContentLoaded      -->
+  <script src="engine/riskDummyData.js"></script>
+  <script src="engine/riskEngine.js"></script>
+
   <!-- Core -->
   <script src="db.js"></script>
   <script src="app.js"></script>
