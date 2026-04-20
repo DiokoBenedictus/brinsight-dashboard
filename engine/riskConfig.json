@@ -1,0 +1,955 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "BRInsight Risk Engine Configuration — 7 Banking Risk Types",
+    "scoringScale": "1 (best) to 5 (worst)",
+    "compositeWeight": "All 7 risk types contribute to a single composite risk score",
+    "context": "Indonesia Banking — BRI Branch-Level Risk Assessment",
+    "lastUpdated": "2026-04-17"
+  },
+
+  "riskTypes": {
+
+    "credit": {
+      "label": "Risiko Kredit",
+      "weight": 0.30,
+      "description": "Risiko kerugian akibat kegagalan debitur memenuhi kewajiban",
+      "parameters": {
+
+        "npl_mikro": {
+          "label": "NPL Mikro (%)",
+          "weight": 0.12,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 2.0  },
+            { "score": 2, "min": 2.0,  "max": 3.5  },
+            { "score": 3, "min": 3.5,  "max": 5.0  },
+            { "score": 4, "min": 5.0,  "max": 8.0  },
+            { "score": 5, "min": 8.0,  "max": 999  }
+          ]
+        },
+
+        "npl_sme": {
+          "label": "NPL SME (%)",
+          "weight": 0.12,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 2.5  },
+            { "score": 2, "min": 2.5,  "max": 4.0  },
+            { "score": 3, "min": 4.0,  "max": 6.0  },
+            { "score": 4, "min": 6.0,  "max": 9.0  },
+            { "score": 5, "min": 9.0,  "max": 999  }
+          ]
+        },
+
+        "npl_konsumer": {
+          "label": "NPL Konsumer (%)",
+          "weight": 0.10,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 1.5  },
+            { "score": 2, "min": 1.5,  "max": 3.0  },
+            { "score": 3, "min": 3.0,  "max": 5.0  },
+            { "score": 4, "min": 5.0,  "max": 7.5  },
+            { "score": 5, "min": 7.5,  "max": 999  }
+          ]
+        },
+
+        "npl_menengah": {
+          "label": "NPL Menengah (%)",
+          "weight": 0.08,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 3.0  },
+            { "score": 2, "min": 3.0,  "max": 5.0  },
+            { "score": 3, "min": 5.0,  "max": 7.0  },
+            { "score": 4, "min": 7.0,  "max": 10.0 },
+            { "score": 5, "min": 10.0, "max": 999  }
+          ]
+        },
+
+        "lar_mikro": {
+          "label": "LAR Mikro (%)",
+          "weight": 0.08,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 5.0  },
+            { "score": 2, "min": 5.0,  "max": 8.0  },
+            { "score": 3, "min": 8.0,  "max": 12.0 },
+            { "score": 4, "min": 12.0, "max": 18.0 },
+            { "score": 5, "min": 18.0, "max": 999  }
+          ]
+        },
+
+        "lar_sme": {
+          "label": "LAR SME (%)",
+          "weight": 0.08,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 6.0  },
+            { "score": 2, "min": 6.0,  "max": 10.0 },
+            { "score": 3, "min": 10.0, "max": 15.0 },
+            { "score": 4, "min": 15.0, "max": 20.0 },
+            { "score": 5, "min": 20.0, "max": 999  }
+          ]
+        },
+
+        "lar_konsumer": {
+          "label": "LAR Konsumer (%)",
+          "weight": 0.07,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 4.0  },
+            { "score": 2, "min": 4.0,  "max": 7.0  },
+            { "score": 3, "min": 7.0,  "max": 10.0 },
+            { "score": 4, "min": 10.0, "max": 15.0 },
+            { "score": 5, "min": 15.0, "max": 999  }
+          ]
+        },
+
+        "lar_menengah": {
+          "label": "LAR Menengah (%)",
+          "weight": 0.07,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 7.0  },
+            { "score": 2, "min": 7.0,  "max": 12.0 },
+            { "score": 3, "min": 12.0, "max": 18.0 },
+            { "score": 4, "min": 18.0, "max": 25.0 },
+            { "score": 5, "min": 25.0, "max": 999  }
+          ]
+        },
+
+        "dpk_mikro_growth": {
+          "label": "Pertumbuhan DPK Mikro (% YoY)",
+          "weight": 0.06,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 10.0, "max": 999  },
+            { "score": 2, "min": 5.0,  "max": 10.0 },
+            { "score": 3, "min": 0.0,  "max": 5.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "dpk_sme_growth": {
+          "label": "Pertumbuhan DPK SME (% YoY)",
+          "weight": 0.06,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 12.0, "max": 999  },
+            { "score": 2, "min": 6.0,  "max": 12.0 },
+            { "score": 3, "min": 0.0,  "max": 6.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "dpk_konsumer_growth": {
+          "label": "Pertumbuhan DPK Konsumer (% YoY)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 10.0, "max": 999  },
+            { "score": 2, "min": 5.0,  "max": 10.0 },
+            { "score": 3, "min": 0.0,  "max": 5.0  },
+            { "score": 4, "min": -4.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -4.0 }
+          ]
+        },
+
+        "dpk_menengah_growth": {
+          "label": "Pertumbuhan DPK Menengah (% YoY)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 15.0, "max": 999  },
+            { "score": 2, "min": 8.0,  "max": 15.0 },
+            { "score": 3, "min": 0.0,  "max": 8.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "cost_of_credit": {
+          "label": "Cost of Credit (%)",
+          "weight": 0.06,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 0.5  },
+            { "score": 2, "min": 0.5,  "max": 1.0  },
+            { "score": 3, "min": 1.0,  "max": 1.8  },
+            { "score": 4, "min": 1.8,  "max": 2.5  },
+            { "score": 5, "min": 2.5,  "max": 999  }
+          ]
+        }
+      }
+    },
+
+    "liquidity": {
+      "label": "Risiko Likuiditas",
+      "weight": 0.15,
+      "description": "Risiko ketidakmampuan memenuhi kewajiban jangka pendek",
+      "parameters": {
+
+        "ldr": {
+          "label": "Loan to Deposit Ratio (%)",
+          "weight": 0.40,
+          "direction": "higher_worse",
+          "unit": "%",
+          "note": "OJK threshold: LDR > 92% = violation; ideal 78-92%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 78.0 },
+            { "score": 2, "min": 78.0, "max": 85.0 },
+            { "score": 3, "min": 85.0, "max": 92.0 },
+            { "score": 4, "min": 92.0, "max": 100.0},
+            { "score": 5, "min": 100.0,"max": 999  }
+          ]
+        },
+
+        "casa_ratio": {
+          "label": "CASA Ratio (%)",
+          "weight": 0.35,
+          "direction": "lower_worse",
+          "unit": "%",
+          "note": "Higher CASA ratio = cheaper, more stable funding base",
+          "thresholds": [
+            { "score": 1, "min": 70.0, "max": 999  },
+            { "score": 2, "min": 60.0, "max": 70.0 },
+            { "score": 3, "min": 50.0, "max": 60.0 },
+            { "score": 4, "min": 40.0, "max": 50.0 },
+            { "score": 5, "min": 0,    "max": 40.0 }
+          ]
+        },
+
+        "cost_of_fund": {
+          "label": "Cost of Fund (%)",
+          "weight": 0.25,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 2.0  },
+            { "score": 2, "min": 2.0,  "max": 3.0  },
+            { "score": 3, "min": 3.0,  "max": 4.0  },
+            { "score": 4, "min": 4.0,  "max": 5.0  },
+            { "score": 5, "min": 5.0,  "max": 999  }
+          ]
+        }
+      }
+    },
+
+    "operational": {
+      "label": "Risiko Operasional",
+      "weight": 0.20,
+      "description": "Risiko akibat kegagalan proses internal, SDM, sistem, dan kejadian eksternal",
+      "parameters": {
+
+        "span_of_control_mantri": {
+          "label": "Span of Control Mantri (nasabah/mantri)",
+          "weight": 0.05,
+          "direction": "higher_worse",
+          "unit": "nasabah",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 150  },
+            { "score": 2, "min": 150, "max": 200  },
+            { "score": 3, "min": 200, "max": 250  },
+            { "score": 4, "min": 250, "max": 300  },
+            { "score": 5, "min": 300, "max": 9999 }
+          ]
+        },
+
+        "os_worker_ratio": {
+          "label": "Rasio OS/Pekerja Aktif (%)",
+          "weight": 0.04,
+          "direction": "higher_worse",
+          "unit": "%",
+          "note": "Outsourcing dependency — higher = less control over quality",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 20.0 },
+            { "score": 2, "min": 20.0, "max": 30.0 },
+            { "score": 3, "min": 30.0, "max": 40.0 },
+            { "score": 4, "min": 40.0, "max": 50.0 },
+            { "score": 5, "min": 50.0, "max": 999  }
+          ]
+        },
+
+        "spv_fulfillment": {
+          "label": "SPV Fulfillment (%)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 95.0, "max": 999  },
+            { "score": 2, "min": 85.0, "max": 95.0 },
+            { "score": 3, "min": 75.0, "max": 85.0 },
+            { "score": 4, "min": 60.0, "max": 75.0 },
+            { "score": 5, "min": 0,    "max": 60.0 }
+          ]
+        },
+
+        "mantri_fulfillment": {
+          "label": "Mantri Fulfillment (%)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 90.0, "max": 999  },
+            { "score": 2, "min": 80.0, "max": 90.0 },
+            { "score": 3, "min": 70.0, "max": 80.0 },
+            { "score": 4, "min": 55.0, "max": 70.0 },
+            { "score": 5, "min": 0,    "max": 55.0 }
+          ]
+        },
+
+        "turnover": {
+          "label": "Turnover Karyawan (%/tahun)",
+          "weight": 0.05,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 5.0  },
+            { "score": 2, "min": 5.0,  "max": 10.0 },
+            { "score": 3, "min": 10.0, "max": 15.0 },
+            { "score": 4, "min": 15.0, "max": 20.0 },
+            { "score": 5, "min": 20.0, "max": 999  }
+          ]
+        },
+
+        "human_error_loss": {
+          "label": "Kerugian Human Error (Juta Rp)",
+          "weight": 0.08,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 5     },
+            { "score": 2, "min": 5,    "max": 20    },
+            { "score": 3, "min": 20,   "max": 50    },
+            { "score": 4, "min": 50,   "max": 150   },
+            { "score": 5, "min": 150,  "max": 999999}
+          ]
+        },
+
+        "fraud_internal_loss": {
+          "label": "Kerugian Fraud Internal (Juta Rp)",
+          "weight": 0.10,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 0     },
+            { "score": 2, "min": 0,   "max": 10    },
+            { "score": 3, "min": 10,  "max": 50    },
+            { "score": 4, "min": 50,  "max": 200   },
+            { "score": 5, "min": 200, "max": 999999}
+          ]
+        },
+
+        "fraud_internal_freq_growth": {
+          "label": "Pertumbuhan Frekuensi Fraud Internal (% YoY)",
+          "weight": 0.07,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": -999, "max": -10.0 },
+            { "score": 2, "min": -10.0,"max": 0.0  },
+            { "score": 3, "min": 0.0,  "max": 20.0 },
+            { "score": 4, "min": 20.0, "max": 50.0 },
+            { "score": 5, "min": 50.0, "max": 999  }
+          ]
+        },
+
+        "fraud_external_loss": {
+          "label": "Kerugian Fraud Eksternal (Juta Rp)",
+          "weight": 0.08,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 5     },
+            { "score": 2, "min": 5,   "max": 25    },
+            { "score": 3, "min": 25,  "max": 100   },
+            { "score": 4, "min": 100, "max": 300   },
+            { "score": 5, "min": 300, "max": 999999}
+          ]
+        },
+
+        "fraud_external_freq_growth": {
+          "label": "Pertumbuhan Frekuensi Fraud Eksternal (% YoY)",
+          "weight": 0.06,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": -999, "max": -10.0 },
+            { "score": 2, "min": -10.0,"max": 0.0  },
+            { "score": 3, "min": 0.0,  "max": 25.0 },
+            { "score": 4, "min": 25.0, "max": 60.0 },
+            { "score": 5, "min": 60.0, "max": 999  }
+          ]
+        },
+
+        "max_fraud_3m_ma": {
+          "label": "Maksimum Fraud 3-Bulan Moving Average (Juta Rp)",
+          "weight": 0.07,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 10    },
+            { "score": 2, "min": 10,  "max": 50    },
+            { "score": 3, "min": 50,  "max": 150   },
+            { "score": 4, "min": 150, "max": 400   },
+            { "score": 5, "min": 400, "max": 999999}
+          ]
+        },
+
+        "disaster_loss_natural": {
+          "label": "Kerugian Bencana Alam (Juta Rp)",
+          "weight": 0.05,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 0     },
+            { "score": 2, "min": 0,   "max": 10    },
+            { "score": 3, "min": 10,  "max": 50    },
+            { "score": 4, "min": 50,  "max": 200   },
+            { "score": 5, "min": 200, "max": 999999}
+          ]
+        },
+
+        "disaster_loss_non_natural": {
+          "label": "Kerugian Bencana Non-Alam (Juta Rp)",
+          "weight": 0.05,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 0     },
+            { "score": 2, "min": 0,   "max": 10    },
+            { "score": 3, "min": 10,  "max": 50    },
+            { "score": 4, "min": 50,  "max": 200   },
+            { "score": 5, "min": 200, "max": 999999}
+          ]
+        },
+
+        "external_event_growth": {
+          "label": "Pertumbuhan Kejadian Eksternal (% YoY)",
+          "weight": 0.05,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": -999, "max": 0.0  },
+            { "score": 2, "min": 0.0,  "max": 20.0 },
+            { "score": 3, "min": 20.0, "max": 50.0 },
+            { "score": 4, "min": 50.0, "max": 100.0},
+            { "score": 5, "min": 100.0,"max": 999  }
+          ]
+        },
+
+        "pct_affected_assets": {
+          "label": "% Aset Terdampak Kejadian Operasional",
+          "weight": 0.06,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 1.0  },
+            { "score": 2, "min": 1.0,  "max": 3.0  },
+            { "score": 3, "min": 3.0,  "max": 5.0  },
+            { "score": 4, "min": 5.0,  "max": 10.0 },
+            { "score": 5, "min": 10.0, "max": 999  }
+          ]
+        },
+
+        "atm_reliability": {
+          "label": "Ketersediaan ATM (%)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 99.0, "max": 999  },
+            { "score": 2, "min": 97.0, "max": 99.0 },
+            { "score": 3, "min": 95.0, "max": 97.0 },
+            { "score": 4, "min": 90.0, "max": 95.0 },
+            { "score": 5, "min": 0,    "max": 90.0 }
+          ]
+        },
+
+        "crm_reliability": {
+          "label": "Ketersediaan CRM (%)",
+          "weight": 0.05,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 99.0, "max": 999  },
+            { "score": 2, "min": 97.0, "max": 99.0 },
+            { "score": 3, "min": 95.0, "max": 97.0 },
+            { "score": 4, "min": 90.0, "max": 95.0 },
+            { "score": 5, "min": 0,    "max": 90.0 }
+          ]
+        },
+
+        "edc_reliability": {
+          "label": "Ketersediaan EDC (%)",
+          "weight": 0.04,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 98.0, "max": 999  },
+            { "score": 2, "min": 95.0, "max": 98.0 },
+            { "score": 3, "min": 92.0, "max": 95.0 },
+            { "score": 4, "min": 88.0, "max": 92.0 },
+            { "score": 5, "min": 0,    "max": 88.0 }
+          ]
+        }
+      }
+    },
+
+    "legal": {
+      "label": "Risiko Hukum",
+      "weight": 0.08,
+      "description": "Risiko akibat gugatan hukum, kelemahan aspek yuridis, dan ketidakpastian hukum",
+      "parameters": {
+
+        "lawsuit_nominal": {
+          "label": "Nominal Tuntutan Hukum (Juta Rp)",
+          "weight": 0.30,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,      "max": 0      },
+            { "score": 2, "min": 0,      "max": 100    },
+            { "score": 3, "min": 100,    "max": 500    },
+            { "score": 4, "min": 500,    "max": 2000   },
+            { "score": 5, "min": 2000,   "max": 999999 }
+          ]
+        },
+
+        "potential_loss": {
+          "label": "Potensi Kerugian Hukum (Juta Rp)",
+          "weight": 0.25,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 0     },
+            { "score": 2, "min": 0,    "max": 50    },
+            { "score": 3, "min": 50,   "max": 200   },
+            { "score": 4, "min": 200,  "max": 1000  },
+            { "score": 5, "min": 1000, "max": 999999}
+          ]
+        },
+
+        "actual_loss": {
+          "label": "Kerugian Hukum Aktual (Juta Rp)",
+          "weight": 0.20,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,   "max": 0     },
+            { "score": 2, "min": 0,   "max": 25    },
+            { "score": 3, "min": 25,  "max": 100   },
+            { "score": 4, "min": 100, "max": 500   },
+            { "score": 5, "min": 500, "max": 999999}
+          ]
+        },
+
+        "lawsuit_frequency": {
+          "label": "Frekuensi Gugatan (kasus/tahun)",
+          "weight": 0.15,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 2 },
+            { "score": 3, "min": 2, "max": 5 },
+            { "score": 4, "min": 5, "max": 10},
+            { "score": 5, "min": 10,"max": 999}
+          ]
+        },
+
+        "lost_cases_frequency": {
+          "label": "Frekuensi Kasus Kalah (kasus/tahun)",
+          "weight": 0.10,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 1 },
+            { "score": 3, "min": 1, "max": 3 },
+            { "score": 4, "min": 3, "max": 6 },
+            { "score": 5, "min": 6, "max": 999}
+          ]
+        }
+      }
+    },
+
+    "strategic": {
+      "label": "Risiko Strategis",
+      "weight": 0.12,
+      "description": "Risiko akibat kegagalan dalam menetapkan dan mengeksekusi strategi bisnis",
+      "parameters": {
+
+        "profit_growth": {
+          "label": "Pertumbuhan Laba (%YoY)",
+          "weight": 0.12,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 15.0, "max": 999  },
+            { "score": 2, "min": 8.0,  "max": 15.0 },
+            { "score": 3, "min": 0.0,  "max": 8.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "fbi_growth": {
+          "label": "Pertumbuhan Fee Based Income (%YoY)",
+          "weight": 0.10,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 20.0, "max": 999  },
+            { "score": 2, "min": 10.0, "max": 20.0 },
+            { "score": 3, "min": 0.0,  "max": 10.0 },
+            { "score": 4, "min": -8.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -8.0 }
+          ]
+        },
+
+        "avg_loan_growth": {
+          "label": "Pertumbuhan Rata-rata Kredit (%YoY)",
+          "weight": 0.08,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 12.0, "max": 999  },
+            { "score": 2, "min": 6.0,  "max": 12.0 },
+            { "score": 3, "min": 0.0,  "max": 6.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "avg_dpk_growth": {
+          "label": "Pertumbuhan Rata-rata DPK (%YoY)",
+          "weight": 0.08,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 10.0, "max": 999  },
+            { "score": 2, "min": 5.0,  "max": 10.0 },
+            { "score": 3, "min": 0.0,  "max": 5.0  },
+            { "score": 4, "min": -4.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -4.0 }
+          ]
+        },
+
+        "tabungan_growth": {
+          "label": "Pertumbuhan Tabungan (%YoY)",
+          "weight": 0.07,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 10.0, "max": 999  },
+            { "score": 2, "min": 5.0,  "max": 10.0 },
+            { "score": 3, "min": 0.0,  "max": 5.0  },
+            { "score": 4, "min": -4.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -4.0 }
+          ]
+        },
+
+        "giro_growth": {
+          "label": "Pertumbuhan Giro (%YoY)",
+          "weight": 0.07,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 12.0, "max": 999  },
+            { "score": 2, "min": 6.0,  "max": 12.0 },
+            { "score": 3, "min": 0.0,  "max": 6.0  },
+            { "score": 4, "min": -5.0, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -5.0 }
+          ]
+        },
+
+        "recovery_rate": {
+          "label": "Recovery Rate Kredit Bermasalah (%)",
+          "weight": 0.08,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 60.0, "max": 999  },
+            { "score": 2, "min": 40.0, "max": 60.0 },
+            { "score": 3, "min": 25.0, "max": 40.0 },
+            { "score": 4, "min": 10.0, "max": 25.0 },
+            { "score": 5, "min": 0,    "max": 10.0 }
+          ]
+        },
+
+        "edc_qris_volume_growth": {
+          "label": "Pertumbuhan Volume EDC/QRIS (%YoY)",
+          "weight": 0.08,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 25.0, "max": 999  },
+            { "score": 2, "min": 15.0, "max": 25.0 },
+            { "score": 3, "min": 5.0,  "max": 15.0 },
+            { "score": 4, "min": 0.0,  "max": 5.0  },
+            { "score": 5, "min": -999, "max": 0.0  }
+          ]
+        },
+
+        "brimo_users_growth": {
+          "label": "Pertumbuhan Pengguna BRImo (%YoY)",
+          "weight": 0.07,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 30.0, "max": 999  },
+            { "score": 2, "min": 20.0, "max": 30.0 },
+            { "score": 3, "min": 10.0, "max": 20.0 },
+            { "score": 4, "min": 0.0,  "max": 10.0 },
+            { "score": 5, "min": -999, "max": 0.0  }
+          ]
+        },
+
+        "qlola_users_growth": {
+          "label": "Pertumbuhan Pengguna Qlola (%YoY)",
+          "weight": 0.06,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 25.0, "max": 999  },
+            { "score": 2, "min": 15.0, "max": 25.0 },
+            { "score": 3, "min": 5.0,  "max": 15.0 },
+            { "score": 4, "min": 0.0,  "max": 5.0  },
+            { "score": 5, "min": -999, "max": 0.0  }
+          ]
+        },
+
+        "merchant_dpk": {
+          "label": "DPK dari Merchant (Juta Rp)",
+          "weight": 0.06,
+          "direction": "lower_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 5000,  "max": 999999},
+            { "score": 2, "min": 2000,  "max": 5000  },
+            { "score": 3, "min": 500,   "max": 2000  },
+            { "score": 4, "min": 100,   "max": 500   },
+            { "score": 5, "min": 0,     "max": 100   }
+          ]
+        },
+
+        "market_share": {
+          "label": "Market Share Kredit di Wilayah (%)",
+          "weight": 0.06,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 25.0, "max": 999  },
+            { "score": 2, "min": 18.0, "max": 25.0 },
+            { "score": 3, "min": 12.0, "max": 18.0 },
+            { "score": 4, "min": 7.0,  "max": 12.0 },
+            { "score": 5, "min": 0,    "max": 7.0  }
+          ]
+        },
+
+        "daily_avg_loan_growth": {
+          "label": "Pertumbuhan Rata-rata Kredit Harian (%MoM)",
+          "weight": 0.04,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 1.5,  "max": 999  },
+            { "score": 2, "min": 0.5,  "max": 1.5  },
+            { "score": 3, "min": 0.0,  "max": 0.5  },
+            { "score": 4, "min": -0.5, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -0.5 }
+          ]
+        },
+
+        "daily_avg_dana_growth": {
+          "label": "Pertumbuhan Rata-rata Dana Harian (%MoM)",
+          "weight": 0.04,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 1.5,  "max": 999  },
+            { "score": 2, "min": 0.5,  "max": 1.5  },
+            { "score": 3, "min": 0.0,  "max": 0.5  },
+            { "score": 4, "min": -0.5, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -0.5 }
+          ]
+        },
+
+        "daily_avg_casa_growth": {
+          "label": "Pertumbuhan Rata-rata CASA Harian (%MoM)",
+          "weight": 0.03,
+          "direction": "lower_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 1.5,  "max": 999  },
+            { "score": 2, "min": 0.5,  "max": 1.5  },
+            { "score": 3, "min": 0.0,  "max": 0.5  },
+            { "score": 4, "min": -0.5, "max": 0.0  },
+            { "score": 5, "min": -999, "max": -0.5 }
+          ]
+        }
+      }
+    },
+
+    "reputational": {
+      "label": "Risiko Reputasi",
+      "weight": 0.07,
+      "description": "Risiko akibat persepsi negatif dari stakeholders terhadap bank",
+      "parameters": {
+
+        "negative_news_ratio": {
+          "label": "Rasio Berita Negatif vs Total Berita (%)",
+          "weight": 0.30,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 5.0  },
+            { "score": 2, "min": 5.0,  "max": 15.0 },
+            { "score": 3, "min": 15.0, "max": 30.0 },
+            { "score": 4, "min": 30.0, "max": 50.0 },
+            { "score": 5, "min": 50.0, "max": 999  }
+          ]
+        },
+
+        "complaint_rate": {
+          "label": "Tingkat Komplain (per 1000 nasabah)",
+          "weight": 0.35,
+          "direction": "higher_worse",
+          "unit": "per 1000",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 1.0  },
+            { "score": 2, "min": 1.0,  "max": 3.0  },
+            { "score": 3, "min": 3.0,  "max": 6.0  },
+            { "score": 4, "min": 6.0,  "max": 10.0 },
+            { "score": 5, "min": 10.0, "max": 999  }
+          ]
+        },
+
+        "unresolved_complaints_pct": {
+          "label": "% Komplain Belum Terselesaikan",
+          "weight": 0.35,
+          "direction": "higher_worse",
+          "unit": "%",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 2.0  },
+            { "score": 2, "min": 2.0,  "max": 5.0  },
+            { "score": 3, "min": 5.0,  "max": 10.0 },
+            { "score": 4, "min": 10.0, "max": 20.0 },
+            { "score": 5, "min": 20.0, "max": 999  }
+          ]
+        }
+      }
+    },
+
+    "compliance": {
+      "label": "Risiko Kepatuhan",
+      "weight": 0.08,
+      "description": "Risiko akibat pelanggaran regulasi OJK, BI, dan ketentuan internal bank",
+      "parameters": {
+
+        "financial_penalty_nominal": {
+          "label": "Nominal Denda/Sanksi Finansial (Juta Rp)",
+          "weight": 0.25,
+          "direction": "higher_worse",
+          "unit": "Juta Rp",
+          "thresholds": [
+            { "score": 1, "min": 0,    "max": 0      },
+            { "score": 2, "min": 0,    "max": 50     },
+            { "score": 3, "min": 50,   "max": 200    },
+            { "score": 4, "min": 200,  "max": 1000   },
+            { "score": 5, "min": 1000, "max": 999999 }
+          ]
+        },
+
+        "financial_penalty_frequency": {
+          "label": "Frekuensi Sanksi Finansial (kali/tahun)",
+          "weight": 0.15,
+          "direction": "higher_worse",
+          "unit": "kali",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 1 },
+            { "score": 3, "min": 1, "max": 3 },
+            { "score": 4, "min": 3, "max": 6 },
+            { "score": 5, "min": 6, "max": 999}
+          ]
+        },
+
+        "slik_violations": {
+          "label": "Jumlah Pelanggaran SLIK (kasus/tahun)",
+          "weight": 0.20,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 2 },
+            { "score": 3, "min": 2, "max": 5 },
+            { "score": 4, "min": 5, "max": 10},
+            { "score": 5, "min": 10,"max": 999}
+          ]
+        },
+
+        "tax_violations": {
+          "label": "Jumlah Pelanggaran Pajak (kasus/tahun)",
+          "weight": 0.15,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 1 },
+            { "score": 3, "min": 1, "max": 3 },
+            { "score": 4, "min": 3, "max": 6 },
+            { "score": 5, "min": 6, "max": 999}
+          ]
+        },
+
+        "lbu_violations": {
+          "label": "Jumlah Pelanggaran LBU BI (kasus/tahun)",
+          "weight": 0.15,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0 },
+            { "score": 2, "min": 0, "max": 1 },
+            { "score": 3, "min": 1, "max": 3 },
+            { "score": 4, "min": 3, "max": 7 },
+            { "score": 5, "min": 7, "max": 999}
+          ]
+        },
+
+        "other_violations": {
+          "label": "Jumlah Pelanggaran Lainnya (kasus/tahun)",
+          "weight": 0.10,
+          "direction": "higher_worse",
+          "unit": "kasus",
+          "thresholds": [
+            { "score": 1, "min": 0, "max": 0  },
+            { "score": 2, "min": 0, "max": 3  },
+            { "score": 3, "min": 3, "max": 7  },
+            { "score": 4, "min": 7, "max": 15 },
+            { "score": 5, "min": 15,"max": 999}
+          ]
+        }
+      }
+    }
+
+  }
+}
